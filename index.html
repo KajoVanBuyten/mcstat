@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="randomhost/mcstat : Retrieves status information from a Minecraft server.">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>randomhost/mcstat</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/randomhost/mcstat">View on GitHub</a>
+
+          <h1 id="project_title">randomhost/mcstat</h1>
+          <h2 id="project_tagline">Retrieves status information from a Minecraft server.</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/randomhost/mcstat/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/randomhost/mcstat/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <p><a href="https://travis-ci.org/randomhost/mcstat"><img src="https://travis-ci.org/randomhost/mcstat.svg?branch=composer" alt="Build Status"></a></p>
+
+<h1>
+<a id="introduction" class="anchor" href="#introduction" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Introduction</h1>
+
+<p>PHP class, web page, CLI tool, and <a href="http://munin-monitoring.org/">Munin</a> plugin to get information from a
+<a href="http://www.minecraft.net/">Minecraft</a> server.</p>
+
+<h2>
+<a id="protocol-support" class="anchor" href="#protocol-support" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Protocol Support</h2>
+
+<p>mcstat supports <a href="http://wiki.vg/Server_List_Ping">Server List Ping</a> as seen in <code>1.7</code> and later, and <code>1.5.2</code>.
+Server List Ping <code>1.5.2</code> works for older Minecraft servers (all the way back to
+<code>1.4.2</code>), while the <code>1.7</code> Server List Ping should be used for newer setups.
+mcstat also supports the UDP full and basic <a href="http://wiki.vg/Query">Query</a> protocols.</p>
+
+<h2>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h2>
+
+<h3>
+<a id="minecraft_users_--a-munin-plugin" class="anchor" href="#minecraft_users_--a-munin-plugin" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>minecraft_users_ — A Munin plugin</h3>
+
+<p><img src="src/data/munin-plugin.png" alt="Screenshot of the minecraft_users_ plugin"></p>
+
+<p>Install <code>minecraft_users_</code> like any other munin plugin:</p>
+
+<div class="highlight highlight-source-shell"><pre><span class="pl-c"># compile stand-alone minecraft_users_ script</span>
+make
+
+<span class="pl-c"># copy the compiled script file to the munin plugins directory</span>
+cp minecraft_users_ /usr/share/munin/plugins/minecraft_users_
+
+<span class="pl-c"># ensure that munin can execute the script</span>
+chmod 755 /usr/share/munin/plugins/minecraft_users
+
+<span class="pl-c"># create symlinks for the desired Minecraft server hostname and port</span>
+<span class="pl-k">export</span> hostname=<span class="pl-s"><span class="pl-pds">"</span>localhost<span class="pl-pds">"</span></span>
+<span class="pl-k">export</span> port=25565
+ln -s /usr/share/munin/plugins/minecraft_users_ \
+    /etc/munin/plugins/minecraft_users_<span class="pl-smi">${hostname}</span>:<span class="pl-smi">${port}</span>
+
+<span class="pl-c"># reload munin service</span>
+service munin-node reload</pre></div>
+
+<p>No configuration is necessary because <code>minecraft_users_</code> is a wildcard plugin.</p>
+
+<h3>
+<a id="mcstat-as-a-program" class="anchor" href="#mcstat-as-a-program" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>mcstat as a program</h3>
+
+<p><code>src/bin/mcstat.php</code> is a script for querying Minecraft servers. You can install
+a stand-alone version like so:</p>
+
+<div class="highlight highlight-source-shell"><pre>make
+cp mcstat <span class="pl-k">~</span>/bin/mcstat</pre></div>
+
+<p>It's very simple and gets the job done:</p>
+
+<div class="highlight highlight-source-shell"><pre>mcstat play.gotpvp.com</pre></div>
+
+<p>This will output the status of the given server like so:</p>
+
+<pre><code>play.gotpvp.com 1.7.4 2714/5000 131ms
+Uberminecraft Cloud | 22 Games
+1.7 Play Now!
+</code></pre>
+
+<p><em>Please note: <a href="https://github.com/nodesocket/commando/issues/9"><code>TERM</code> must be set to a known terminal</a>, otherwise PHP spams
+stderr unconditionally.</em></p>
+
+<h3>
+<a id="statphp" class="anchor" href="#statphp" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>stat.php</h3>
+
+<p><code>src/www/stat.php</code> is a simple web page that lets users query a given server.</p>
+
+<p><strong>Note:</strong> <code>stat.php</code> shouldn't be used on a public server as it's not well tested!</p>
+
+<p><img src="src/data/minecraft-server-status.png" alt="Screenshot of stat.php"></p>
+
+<h3>
+<a id="usage-as-a-php-class" class="anchor" href="#usage-as-a-php-class" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage as a PHP Class</h3>
+
+<div class="highlight highlight-text-html-php"><pre><span class="pl-pse">&lt;?php</span><span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-k">namespace</span> <span class="pl-en">randomhost\Minecraft</span>;</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-k">require_once</span> <span class="pl-c1">realpath</span>(<span class="pl-c1">__DIR__</span> <span class="pl-k">.</span> <span class="pl-s"><span class="pl-pds">'</span>/../../vendor<span class="pl-pds">'</span></span>) <span class="pl-k">.</span> <span class="pl-s"><span class="pl-pds">'</span>/autoload.php<span class="pl-pds">'</span></span>;</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-smi">$status</span> <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-c1">Status</span>(<span class="pl-s"><span class="pl-pds">'</span>play.gotpvp.com<span class="pl-pds">'</span></span>);</span>
+<span class="pl-s1"><span class="pl-c1">var_dump</span>(<span class="pl-smi">$status</span><span class="pl-k">-&gt;</span>ping());</span></pre></div>
+
+<p>This outputs server information in the following format:</p>
+
+<pre><code>array(6) {
+    ["player_count"]=&gt;
+    string(3) "162"
+    ["player_max"]=&gt;
+    string(4) "5000"
+    ["motd"]=&gt;
+    string(182) "§f§f       §f§m-§a§m-§c§m-§d§m-§b§m] §b§l    GotPVP-Network    §b§m-[§d§m-§c§m-§a§m-§e§m-§f"
+    ["server_version"]=&gt;
+    string(31) "BungeeCord 1.8.x, 1.9.x, 1.10.x"
+    ["protocol_version"]=&gt;
+    string(3) "127"
+    ["latency"]=&gt;
+    float(293)
+}
+</code></pre>
+
+<h2>
+<a id="testing" class="anchor" href="#testing" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Testing</h2>
+
+<p>The testing script requires <code>bash</code>, <a href="http://phpunit.de/"><code>phpunit</code></a>, and <code>java</code>. The tests are
+ran against against a live server running on localhost.</p>
+
+<p>Run the script as follows:</p>
+
+<div class="highlight highlight-text-html-php"><pre><span class="pl-s1"><span class="pl-c1">make</span> <span class="pl-c1">test</span></span></pre></div>
+
+<p>By default <code>src/tests/unit-tests/bin/testrunner.sh</code> tests against all server
+versions <code>1.4.2</code> and later.</p>
+
+<p>Override this like so:</p>
+
+<div class="highlight highlight-source-shell"><pre>env Versions=<span class="pl-s"><span class="pl-pds">'</span>1.7.4 1.7.5<span class="pl-pds">'</span></span> make <span class="pl-c1">test</span></pre></div>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">randomhost/mcstat maintained by <a href="https://github.com/randomhost">randomhost</a></p>
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
