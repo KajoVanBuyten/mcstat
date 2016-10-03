@@ -1,6 +1,11 @@
-test/server*
-test/config.php
-test/minecraft_users_*
+.idea
 .DS_Store
+composer.lock
+nbproject
+review
+vendor
+src/data/server*
+src/data/config.php
+src/data/minecraft_users_*
 mcstat
 minecraft_users_
