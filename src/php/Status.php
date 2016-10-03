@@ -70,10 +70,10 @@ class Status
     /**
      * Constructor.
      *
-     * @param string $hostname Server hostname.
-     * @param int    $port     Query port.
+     * @param string $hostname [optional] Server hostname.
+     * @param int    $port     [optional] Query port.
      */
-    public function __construct($hostname, $port = 25565)
+    public function __construct($hostname = '', $port = 25565)
     {
         $this->hostname = $hostname;
         $this->port = $port;
@@ -96,6 +96,34 @@ class Status
                 'fullQuery'
             ),
         );
+    }
+
+    /**
+     * Sets the server host name.
+     *
+     * @param string $hostname Server host name.
+     *
+     * @return $this
+     */
+    public function setHostname($hostname)
+    {
+        $this->hostname = (string)$hostname;
+
+        return $this;
+    }
+
+    /**
+     * Sets the server port.
+     *
+     * @param int $port Server port.
+     *
+     * @return $this
+     */
+    public function setPort($port)
+    {
+        $this->port = (int)$port;
+
+        return $this;
     }
 
     /**
