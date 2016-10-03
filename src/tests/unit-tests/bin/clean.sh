@@ -1,5 +1,7 @@
 #!/bin/sh
-cd "$(dirname "$0")"
+
+DataDir='src/data'
+cd "${DataDir}"
 rm -f config.php
 rm -rf server-*
 rm -f minecraft_users_?*

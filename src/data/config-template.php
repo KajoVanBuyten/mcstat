@@ -1,10 +1,7 @@
 <?php
-
-global $hostname, $port, $mc_version, $motd;
+global $hostname, $port, $mcVersion, $motd;
 
 $hostname = 'HOSTNAME';
 $port = 'PORT';
-$mc_version = 'VERSION';
+$mcVersion = 'VERSION';
 $motd = 'A Minecraft Server';
-
-?>
